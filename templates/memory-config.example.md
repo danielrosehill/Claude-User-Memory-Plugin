@@ -1,6 +1,6 @@
 # memory-config.md (template)
 
-Copy this file into your workspace as `.claude/memory-config.md` and fill in the specifics of **your** memory backend. The `claude-user-memory` plugin reads this file to resolve every save/recall operation to a concrete MCP call.
+Copy this file into your workspace as `.claude/memory-config.md` and fill in the specifics of **your** memory backend. The `user-memory` plugin reads this file to resolve every save/recall operation to a concrete MCP call.
 
 Two sample configurations are shown below (Pinecone and Mem0). Pick one, delete the other, and customise to your account.
 

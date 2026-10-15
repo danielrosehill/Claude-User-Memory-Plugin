@@ -1,6 +1,6 @@
 {
-  "name": "claude-user-memory",
-  "version": "2.0.0",
+  "name": "user-memory",
+  "version": "2.1.0",
   "description": "Persistent cross-session memory about the user, backend-agnostic. Ships a save/recall/commit contract plus a personal/work context routing rule; you supply the concrete memory MCP (Pinecone, Mem0, or any other) via a workspace memory-config.md.",
   "author": {
     "name": "Daniel Rosehill",
