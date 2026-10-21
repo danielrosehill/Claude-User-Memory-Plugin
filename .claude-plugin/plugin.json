@@ -1,12 +1,12 @@
 {
   "name": "user-memory",
-  "version": "2.1.0",
-  "description": "Persistent cross-session memory about the user, backend-agnostic. Ships a save/recall/commit contract plus a personal/work context routing rule; you supply the concrete memory MCP (Pinecone, Mem0, or any other) via a workspace memory-config.md.",
+  "version": "2.2.0",
+  "description": "Persistent cross-session memory about the user. Ships a save/recall/commit contract plus a personal/work context routing rule. Default backend is the `memory` upstream on the MCP gateway (tools mcp__gateway__memory__*); any other memory MCP (Mem0, or your own) can be configured via a workspace memory-config.md.",
   "author": {
     "name": "Daniel Rosehill",
     "url": "https://github.com/danielrosehill"
   },
   "repository": "https://github.com/danielrosehill/Claude-User-Memory-plugin",
   "license": "MIT",
-  "keywords": ["memory", "context", "personalization", "mcp", "pinecone", "mem0"]
+  "keywords": ["memory", "context", "personalization", "mcp", "mcp-gateway", "mem0"]
 }

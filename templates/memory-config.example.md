@@ -2,56 +2,50 @@
 
 Copy this file into your workspace as `.claude/memory-config.md` and fill in the specifics of **your** memory backend. The `user-memory` plugin reads this file to resolve every save/recall operation to a concrete MCP call.
 
-Two sample configurations are shown below (Pinecone and Mem0). Pick one, delete the other, and customise to your account.
+Three options are shown below. Option A — the `memory` upstream on the MCP gateway — is the default: if `.claude/memory-config.md` is missing **and** its tools resolve, the skills use Option A as written here. Pick one, delete the others, and customise to your account.
 
 ---
 
-## Option A — Pinecone (vector DB, bring-your-own-index)
+## Option A — `memory` upstream on the MCP gateway (default)
 
 ### Backend
 
-- **Name**: Pinecone
-- **Embedding model**: whatever your index was created with (e.g. `llama-text-embed-v2`, `text-embedding-3-small`). The index's integrated embedder handles vectorisation from the `text` field; you do not embed client-side.
+- **Name**: `memory` (self-hosted semantic memory served through the MCP gateway).
+- **Embedding**: server-side. You send plain text; the server embeds it.
+- **Tools load on demand.** They are deferred, so load them with `ToolSearch` before the first call: `select:mcp__gateway__memory__list_namespaces,mcp__gateway__memory__recall,mcp__gateway__memory__remember,mcp__gateway__memory__list_memories,mcp__gateway__memory__update_memory`.
 
 ### MCP tools to call
 
-Set these to the actual tool identifiers your Pinecone MCP exposes. Examples below assume the Pinecone MCP is registered as `pinecone` via MCP Jungle under the `personal` aggregator, so tools look like `mcp__jungle-personal__pinecone__*`. Adjust to match your install.
-
-| Operation | Tool |
-| --- | --- |
-| Search | `mcp__jungle-personal__pinecone__search-records` |
-| Add / update | `mcp__jungle-personal__pinecone__upsert-records` |
-| Inspect | `mcp__jungle-personal__pinecone__describe-index-stats` |
+| Operation | Tool | Key arguments |
+| --- | --- | --- |
+| Search | `mcp__gateway__memory__recall` | `query`, `namespaces` (list), `limit`, `min_score` |
+| Add | `mcp__gateway__memory__remember` | `text`, `namespace`, `source`, `tags` |
+| Update | `mcp__gateway__memory__update_memory` | `memory_id`, and only the fields that change (`text`, `namespace`, `tags`, `source`) |
+| Delete | `mcp__gateway__memory__forget` | `memory_id` |
+| List | `mcp__gateway__memory__list_memories` | `namespace`, `limit`, `offset` |
+| Namespaces | `mcp__gateway__memory__list_namespaces` / `create_namespace` | — |
 
 ### Context scope
 
-| Context | Index | Primary namespace | Also write to |
-| --- | --- | --- | --- |
-| Personal | `my-personal-index` | `foundational` (slow-changing truths) | `general-context` for state snapshots, `logs` for dated entries |
-| Work | `my-business-index` | `foundational` | as needed |
+The store is split into **namespaces** by area of life. Call `list_namespaces` once per session to see the real names and descriptions — do not guess them. If your gateway ships a namespace guide (for example a `gateway-usage` skill with a `memory-namespaces` reference), that guide is authoritative over this table.
 
-The two contexts **must** be in different indexes (or at minimum, different namespaces) so a personal fact cannot accidentally land in the work store.
+| Context | Namespaces | Notes |
+| --- | --- | --- |
+| Personal | `core` (always-true basics: identity, family, home), `personal`, and the topic namespaces (`career`, health, family, …) | Load `list_memories(namespace="core")` at the start of a personal conversation. Pick the narrowest namespace that fits. |
+| Work | `work` | Business, clients, professional preferences. |
 
-### Record schema
+Separation is enforced by always passing `namespaces` to `recall` (never `null`, which searches every namespace) and an explicit `namespace` to `remember`. Never write a personal fact to `work` or vice versa. Create a new namespace only when none fits (`create_namespace`, lowercase letters, digits and dashes, with a description).
 
-Every record:
+### Record construction
 
-```
-_id: <stable-id-YYYY-MM-DD>        # e.g. housing-status-2026-04-23
-text: <natural-language fact>      # the thing future-you will read back
-category: personal | work | shared
-date: YYYY-MM-DD                   # absolute, never relative
-topics: [tag1, tag2, ...]          # optional, for filter queries
-source: <workspace or repo name>   # optional, for provenance
-```
+- `text`: one self-contained statement that makes sense with no surrounding conversation — "The user prefers pnpm over npm for new Node projects", not "prefers pnpm". Include the absolute `YYYY-MM-DD` date in the text when the fact is time-bound.
+- `source`: where it came from, e.g. `user said 2026-10-21`.
+- `tags`: optional, e.g. `["preference"]`, `["correction"]`, `["project-context"]`.
+- Ids are assigned by the server; keep the one `remember` returns if you'll update it in the same session.
 
 ### Duplicate policy
 
-Before writing a new record, run a search on the same namespace with a query built from the fact. If a close match exists, overwrite it (same `_id`) rather than creating a second record.
-
-### Namespace promotion
-
-Daily log entries in the `logs` namespace are low-commitment. If a durable fact surfaces inside a log, also upsert a canonical record into `foundational` or `general-context` so it retrieves cleanly.
+`remember` already refuses a near-duplicate in the same namespace and returns the existing memory instead. If the fact has changed, call `update_memory` on that id rather than passing `allow_duplicate=true`.
 
 ---
 

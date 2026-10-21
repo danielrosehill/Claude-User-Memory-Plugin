@@ -1,6 +1,6 @@
 ---
 name: recall-user-memory
-description: Retrieve facts about the user from the configured personal-memory backend when you suspect memory holds context you need — preferences, past decisions, ongoing projects, personal details. Invoke proactively any time you would otherwise ask the user something that feels like it should already be known, or when starting a task where prior context would help. Routes to personal or work store by the deduction rule in CONTEXT.md. Concrete backend (Pinecone, Mem0, …) comes from the workspace's .claude/memory-config.md.
+description: Retrieve facts about the user from the configured personal-memory backend when you suspect memory holds context you need — preferences, past decisions, ongoing projects, personal details. Invoke proactively any time you would otherwise ask the user something that feels like it should already be known, or when starting a task where prior context would help. Routes to personal or work store by the deduction rule in CONTEXT.md. Default backend is the `memory` upstream on the MCP gateway (tools mcp__gateway__memory__*); a workspace .claude/memory-config.md can name another.
 ---
 
 # Recall user memory
@@ -18,7 +18,7 @@ Do **not** invoke for purely technical questions with no user-specific answer (e
 
 ## How to run it
 
-1. **Load the config** — read `.claude/memory-config.md` in the workspace. That file names the backend, the exact MCP tool to call for "search", and the scope parameters (index/namespace/project_id/etc.) for the chosen context. If the file is missing, stop and ask the user to install one (copy the plugin's `templates/memory-config.example.md`).
+1. **Load the config** — read `.claude/memory-config.md` in the workspace. That file names the backend, the exact MCP tool to call for "search", and the scope parameters (namespace/project_id/etc.) for the chosen context. If the file is missing, use the default backend — the gateway `memory` server, Option A of the plugin's `templates/memory-config.example.md` (`mcp__gateway__memory__recall` with an explicit `namespaces` list). If that isn't available either, stop and ask the user to install a config.
 2. **Pick the context** — apply the deduction rule from `CONTEXT.md` (default personal; switch to work on explicit override, work cwd, or clearly-business conversation).
 3. **Call the configured search tool** with:
    - The context's scope parameters from `memory-config.md`.

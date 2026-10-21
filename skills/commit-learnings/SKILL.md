@@ -1,6 +1,6 @@
 ---
 name: commit-learnings
-description: End-of-session sweep — review what you learned about the user during the conversation and commit durable facts to the configured personal-memory backend. Use when wrapping up a session, when the user says "save what you learned" or "commit this to memory", or proactively before a handover. Complements remember-user-fact (which saves in-the-moment); this skill catches facts that slipped through. Concrete backend (Pinecone, Mem0, …) comes from the workspace's .claude/memory-config.md.
+description: End-of-session sweep — review what you learned about the user during the conversation and commit durable facts to the configured personal-memory backend. Use when wrapping up a session, when the user says "save what you learned" or "commit this to memory", or proactively before a handover. Complements remember-user-fact (which saves in-the-moment); this skill catches facts that slipped through. Default backend is the `memory` upstream on the MCP gateway (tools mcp__gateway__memory__*); a workspace .claude/memory-config.md can name another.
 ---
 
 # Commit end-of-session learnings
@@ -23,7 +23,7 @@ Do **not** invoke:
 
 ### 1. Load the config
 
-Read `.claude/memory-config.md` in the workspace. You will need the backend's search tool (for the duplicate check) and add/update tool (for the writes), plus scope parameters for both personal and work contexts. If the file is missing, stop and ask the user to install one.
+Read `.claude/memory-config.md` in the workspace. You will need the backend's search tool (for the duplicate check) and add/update tool (for the writes), plus scope parameters for both personal and work contexts. If the file is missing, use the default backend (the gateway `memory` server — see `CONTEXT.md`); if that isn't available either, stop and ask the user to install a config.
 
 ### 2. Scan the session
 
