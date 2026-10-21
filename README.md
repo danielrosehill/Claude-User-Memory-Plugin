@@ -31,6 +31,7 @@ claude plugins install danielrosehill/Claude-User-Memory-plugin
 ### 2. Make a memory backend available as an MCP
 
 - **Default — the `memory` upstream on the MCP gateway.** If your MCP gateway serves a `memory` upstream (tools `mcp__gateway__memory__recall`, `remember`, `update_memory`, `forget`, `list_memories`, `list_namespaces`, `create_namespace`), there is nothing else to set up. Personal and work are kept apart by namespace (`work` vs `core` / `personal` / topic namespaces).
+
 Any other vector DB or memory service with an MCP interface is fair game.
 
 ### 3. (Optional) Create `.claude/memory-config.md` in your workspace
