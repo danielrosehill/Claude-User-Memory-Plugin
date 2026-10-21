@@ -4,14 +4,14 @@ All three skills in this plugin (`recall-user-memory`, `remember-user-fact`, `co
 
 ## Default backend, overridable per workspace
 
-This plugin does **not** ship MCP server definitions. It defines the contract for a personal-memory layer. The **default backend** is the `memory` upstream on the MCP gateway (tools `mcp__gateway__memory__*`), configured as Option A in `templates/memory-config.example.md`. Any other backend — Mem0, a raw vector DB, something else — can be named per workspace instead.
+This plugin does **not** ship MCP server definitions. It defines the contract for a personal-memory layer. The **default backend** is the `memory` upstream on the MCP gateway (tools `mcp__gateway__memory__*`), configured as Option A in `templates/memory-config.example.md`. Any other backend — a raw vector DB, another memory MCP, something else — can be named per workspace instead.
 
 To override the default (or pin it explicitly), the user (or an agent on their behalf) places a file at `.claude/memory-config.md` in their workspace specifying:
 
-- **Backend name** (gateway `memory` / Mem0 / …)
+- **Backend name** (gateway `memory` / …)
 - **Tool names** for search, add, update, (optional) delete — as literal MCP tool identifiers the agent can call
-- **Scope parameters** to pass on every call — for the gateway `memory` server this is `namespace` (on write) / `namespaces` (on search); for Mem0 it's `project_id` / `org_id` / `user_id`
-- **Personal vs. work separation** — how the backend distinguishes the two contexts (separate namespaces, separate Mem0 projects, etc.)
+- **Scope parameters** to pass on every call — for the gateway `memory` server this is `namespace` (on write) / `namespaces` (on search); other backends name their own
+- **Personal vs. work separation** — how the backend distinguishes the two contexts (separate namespaces, separate indexes, etc.)
 - **Record schema** — field names, required metadata, id conventions
 
 A working template lives in `templates/memory-config.example.md` in this plugin. Copy it into the workspace and fill it in.

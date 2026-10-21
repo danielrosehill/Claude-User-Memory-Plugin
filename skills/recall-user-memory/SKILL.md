@@ -18,7 +18,7 @@ Do **not** invoke for purely technical questions with no user-specific answer (e
 
 ## How to run it
 
-1. **Load the config** — read `.claude/memory-config.md` in the workspace. That file names the backend, the exact MCP tool to call for "search", and the scope parameters (namespace/project_id/etc.) for the chosen context. If the file is missing, use the default backend — the gateway `memory` server, Option A of the plugin's `templates/memory-config.example.md` (`mcp__gateway__memory__recall` with an explicit `namespaces` list). If that isn't available either, stop and ask the user to install a config.
+1. **Load the config** — read `.claude/memory-config.md` in the workspace. That file names the backend, the exact MCP tool to call for "search", and the scope parameters (namespace, etc.) for the chosen context. If the file is missing, use the default backend — the gateway `memory` server, Option A of the plugin's `templates/memory-config.example.md` (`mcp__gateway__memory__recall` with an explicit `namespaces` list). If that isn't available either, stop and ask the user to install a config.
 2. **Pick the context** — apply the deduction rule from `CONTEXT.md` (default personal; switch to work on explicit override, work cwd, or clearly-business conversation).
 3. **Call the configured search tool** with:
    - The context's scope parameters from `memory-config.md`.

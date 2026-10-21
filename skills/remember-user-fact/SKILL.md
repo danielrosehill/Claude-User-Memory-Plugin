@@ -24,7 +24,7 @@ Do **not** invoke for:
 
 ## How to run it
 
-1. **Load the config** — read `.claude/memory-config.md` in the workspace. That file names the backend, the exact MCP tool to call for "add", and the scope parameters (namespace/project_id/etc.) for the chosen context. If the file is missing, use the default backend — the gateway `memory` server, Option A of the plugin's `templates/memory-config.example.md` (`mcp__gateway__memory__remember` with an explicit `namespace`). If that isn't available either, stop and ask the user to install a config.
+1. **Load the config** — read `.claude/memory-config.md` in the workspace. That file names the backend, the exact MCP tool to call for "add", and the scope parameters (namespace, etc.) for the chosen context. If the file is missing, use the default backend — the gateway `memory` server, Option A of the plugin's `templates/memory-config.example.md` (`mcp__gateway__memory__remember` with an explicit `namespace`). If that isn't available either, stop and ask the user to install a config.
 2. **Pick the context** — apply the deduction rule from `CONTEXT.md`. If unsure, ask one short question ("save this to personal or work memory?").
 3. **Call the configured add tool** with the context's scope parameters. Construct the record according to the schema in `memory-config.md`; at minimum:
    - A self-contained natural-language statement of the fact, written from the user's perspective as if they were telling a future assistant. Example: `"I prefer pnpm over npm for new Node projects — npm's lockfile churn has burned me twice."` Include the *why* if it was given; future-you uses the why to judge edge cases.

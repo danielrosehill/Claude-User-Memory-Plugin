@@ -2,7 +2,7 @@
 
 Copy this file into your workspace as `.claude/memory-config.md` and fill in the specifics of **your** memory backend. The `user-memory` plugin reads this file to resolve every save/recall operation to a concrete MCP call.
 
-Three options are shown below. Option A — the `memory` upstream on the MCP gateway — is the default: if `.claude/memory-config.md` is missing **and** its tools resolve, the skills use Option A as written here. Pick one, delete the others, and customise to your account.
+Two options are shown below. Option A — the `memory` upstream on the MCP gateway — is the default: if `.claude/memory-config.md` is missing **and** its tools resolve, the skills use Option A as written here. Pick one, delete the others, and customise to your account.
 
 ---
 
@@ -49,42 +49,7 @@ Separation is enforced by always passing `namespaces` to `recall` (never `null`,
 
 ---
 
-## Option B — Mem0 (managed memory SaaS)
-
-### Backend
-
-- **Name**: Mem0
-- **MCP transport**: two HTTP MCPs, one per context (OAuth per project).
-
-### MCP tools to call
-
-| Operation | Personal tool | Work tool |
-| --- | --- | --- |
-| Search | `mcp__mem0-personal__search_memories` | `mcp__mem0-work__search_memories` |
-| Add | `mcp__mem0-personal__add_memory` | `mcp__mem0-work__add_memory` |
-| List | `mcp__mem0-personal__get_memories` | `mcp__mem0-work__get_memories` |
-| Update | `mcp__mem0-personal__update_memory` | `mcp__mem0-work__update_memory` |
-
-### Context scope
-
-Pass on every call:
-
-| Context | `project_id` | `org_id` (if paid tier) | `user_id` |
-| --- | --- | --- | --- |
-| Personal | `proj_xxx` | `org_xxx` (omit if unset) | `"default"` |
-| Work | `proj_yyy` | `org_yyy` (omit if unset) | `"default"` |
-
-### Record construction
-
-Pass `messages` as a short, self-contained natural-language statement written from the user's perspective. Optional `metadata`: `{"type": "preference" | "correction" | "project-context"}`.
-
-### Duplicate policy
-
-Before adding, run `search_memories` on the same topic. If a near-identical memory exists, call `update_memory` instead of `add_memory`.
-
----
-
-## Option C — Your own backend
+## Option B — Your own backend
 
 Any backend works. Fill in:
 
